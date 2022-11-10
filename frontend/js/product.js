@@ -3,87 +3,91 @@
     - Au clic sur le bouton "Ajouter au panier": ajouter le produit (id - couleur - quantité) dans le Panier
 */
 
-/* Concernant l'URL de la page courante (i.e "window.location.href"):
-    Retourne:   la valeur du paramètre de nom passé en argument 
-                null si le paramètre en argument n'existe pas dans l'URL
-*/
-const getValeurParametreURLpageCourante = nomParametre => (new URL(window.location.href)).searchParams.get(nomParametre);
-
-/* URL de l'API du produit ayant pour id celui de l'URL de la page courante */
-
-const PRODUIT_ID = getValeurParametreURLpageCourante("id"); // alert(PRODUIT_ID);
-
-const URL_API_PRODUIT = `http://localhost:3000/api/products/${PRODUIT_ID}`; // alert(URL_API_PRODUIT);
-
-
-
-/* Met à jour le DOM avec les caractéristiques du produit de l'API passé en paramètre */
-const updateDOMleProduitAPI = leProduitAPI => {
+/* Met à jour le DOM avec les caractéristiques du produit passé en paramètre */
+const updateDomLeProduit = (produit) => {
     /* <div class="item__img">
           <!-- <img src="../images/logo.png" alt="Photographie d'un canapé"> --></img> */
-    document.querySelector(".item__img").innerHTML += `<img src="${leProduitAPI.imageUrl}" alt="${leProduitAPI.altTxt}">`;
+    document.querySelector(".item__img").innerHTML = `<img src="${produit.imageUrl}" alt="${produit.altTxt}">`;
 
     /* <h1 id="title"><!-- Nom du produit --></h1> */
-    document.querySelector("#title").innerHTML += `${leProduitAPI.name}`;
+    document.querySelector("#title").innerHTML = `${produit.name}`;
 
     /* <p>Prix : <span id="price"><!-- 42 --></span>€</p> */
-    document.querySelector("#price").innerHTML += `${leProduitAPI.price}`;
+    document.querySelector("#price").innerHTML = `${produit.price}`;
 
     /* <p id="description"><!-- Dis enim malesuada risus sapien gravida nulla nisl arcu. --></p> */
-    document.querySelector("#description").innerHTML += `${leProduitAPI.description}`;
+    document.querySelector("#description").innerHTML = `${produit.description}`;
 
     /* <select name="color-select" id="colors">
                   <option value="">--SVP, choisissez une couleur --</option>
     <!--          <option value="vert">vert</option>
                   <option value="blanc">blanc</option> --> */
-    leProduitAPI.colors.forEach(
+    let listeCouleurs = '';
+    produit.colors.forEach(
         (couleur) => {
-            document.querySelector("#colors").innerHTML += `<option value="${couleur}">${couleur}</option>`;
+            listeCouleurs += `<option value="${couleur}">${couleur}</option>`;
         });
+    document.querySelector("#colors").innerHTML += listeCouleurs;
 }
 
-/* TEMPLATE :
-fetch(url, options)
-.then(response => response.json())
-.then(result =>  process result ); 
-.catch(function (error) {
-    alert("Problème du serveur");
-});
+/* Récupère la Couleur de la balise <select id="colors"> 
+    Si couleur = '' affiche un message d'erreur
+    Sinon : retourne la couleur
 */
+const lireCouleur = () => {
+    const couleur = document.querySelector("#colors").value;
+    if (couleur === '') { alert("Merci de renseigner une couleur"); exit; }
+    return couleur;
+}
 
-/* Récupérer les datas dans la variable result de l'API en question (via fetch) 
- - Met à jour le DOM avec les caractéristiques du produit (contenu dans result)
-
- - Au clic sur le bouton "Ajouter au panier":
-    - créer un ProduitPanier
-    - l'ajouter au Panier
+/* Récupère la quantite de la balise <input type="number" id="quantity"> 
+    Si quantite invalide affiche un message d'erreur
+    Sinon : retourne la quantite
 */
-fetch(URL_API_PRODUIT)
-    .then(response => response.json())
-    .then(result => {
-        updateDOMleProduitAPI(result);
+const lireQuantite = () => {
+    const quantite = parseInt(document.querySelector("#quantity").value, 10);
+    if (quantite <= 0 || quantite > 100) { alert("Merci de renseigner un nombre d'article(s) (compris entre 1 & 100)"); exit; }
+    return quantite;
+}
 
-        // Au clic sur le bouton "Ajouter au panier"
-        document.querySelector("#addToCart").addEventListener('click', (evt) => {
+/* Crée un produit du panier avec la structure {id, couleur, quantite} */
+const creerProduitPanier = (produitId, produitCouleur, produitQuantite) => {
+    let produitPanier = {
+        id: produitId,
+        couleur: produitCouleur,
+        quantite: produitQuantite
+    };
+    return produitPanier;
+}
 
-            // créer un produit du panier
-            const COULEUR = document.querySelector("#colors").value;
-            if (COULEUR == '') { alert("Merci de renseigner une couleur"); exit; }
+/* Récupérer le produit de l'API en question (via get() de requestAPI.js) 
+ - Met à jour le DOM avec les caractéristiques du produit
+*/
+const afficherLeProduit = async (produitId) => {
+    const produit = await get(`http://localhost:3000/api/products/${produitId}`);
 
-            const QUANTITE = parseInt(document.querySelector("#quantity").value, 10);
-            if (QUANTITE <= 0 || QUANTITE > 100) { alert("Merci de renseigner un nombre d'article(s) (compris entre 1 & 100)"); exit; }
-
-            let produitPanier = {
-                id: `${result._id}`,
-                couleur: COULEUR,
-                quantite: QUANTITE
-            };
-
-        });
-
+    if (produit === -1) { alert('Problème du serveur'); }
+    else {
+        updateDomLeProduit(produit);
     }
-    
-    )
-    .catch(function (error) {
-        alert("Problème du serveur !");
+}
+
+/* Déclenchée Au clic sur le bouton "Ajouter au panier" :
+    - lire la couleur
+    - lire la quantite
+    - créer un produit du panier i.e {produitId, couleur, quantite}
+    - ajouter le produit dans le Panier
+    - ajouter le Panier dans le localStorage
+*/
+const ajouterPanier = (produitId) => {
+    document.querySelector("#addToCart").addEventListener('click', (evt) => {
+        const couleur = lireCouleur();
+        const quantite = lireQuantite();
+        let produitPanier = creerProduitPanier(produitId, couleur, quantite); alert('Ce Produit a été ajouté au Panier');
     });
+}
+
+const produitId = getValeurParametreURLpageCourante("id"); // alert(produitId);
+
+afficherLeProduit(produitId);
+ajouterPanier(produitId);
