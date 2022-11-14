@@ -52,18 +52,17 @@ const lireQuantite = () => {
 
 /* Crée un produit du panier avec la structure {id, couleur, quantite} */
 const creerProduitPanier = (produitId, produitCouleur, produitQuantite) => {
-    let produitPanier = {
+    return  {
         id: produitId,
         couleur: produitCouleur,
         quantite: produitQuantite
     };
-    return produitPanier;
 }
 
 /* Récupérer le produit de l'API en question (via get() de requestAPI.js) 
  - Met à jour le DOM avec les caractéristiques du produit
 */
-const afficherLeProduit = async (produitId) => {
+async function afficherLeProduit(produitId) {
     const produit = await get(`http://localhost:3000/api/products/${produitId}`);
 
     if (produit === -1) { alert('Problème du serveur'); }
@@ -72,22 +71,61 @@ const afficherLeProduit = async (produitId) => {
     }
 }
 
-/* Déclenchée Au clic sur le bouton "Ajouter au panier" :
-    - lire la couleur
-    - lire la quantite
-    - créer un produit du panier i.e {produitId, couleur, quantite}
-    - ajouter le produit dans le Panier
-    - ajouter le Panier dans le localStorage
+
+/* Retourne le produitPanier sous la forme : (id;couleur;quantite) */
+const produitPanierToString = (produitPanier) => {
+    return produitPanier === null ? '' : `(${produitPanier.id};${produitPanier.couleur};${produitPanier.quantite})`;
+}
+
+/* Retourne les produits du Panier */
+const panierToString = (panier) => {
+    let s = '';
+    panier === null ? s = '' : panier.forEach(value => s += produitPanierToString(value));
+    return s;
+}
+
+/* Ajout du produitPanier dans le Panier puis ajout du Panier dans le localStorage (cf https://tutowebdesign.com/localstorage-javascript.php)
+
+Panier : un array contenant des produitPanier i.e. 3 caractéristiques: son id, sa couleur, sa quantité
+
+Si le panier est vide : on ajoute produitPanier
+Lorsqu’on ajoute un produit au panier : 
+    - Si celui-ci n'existe pas dans le panier, on ajoute au Panier produitPanier
+    - Si celui-ci existe déjà dans le panier (même id + même couleur), on augmente sa quantité.
 */
-const ajouterPanier = (produitId) => {
-    document.querySelector("#addToCart").addEventListener('click', (evt) => {
-        const couleur = lireCouleur();
-        const quantite = lireQuantite();
-        let produitPanier = creerProduitPanier(produitId, couleur, quantite); alert('Ce Produit a été ajouté au Panier');
-    });
+const ajouterPanier = (produitPanier) => {
+    // localStorage.clear();
+    // Récupérer le Panier à partir du localStorage 
+    let panier = JSON.parse(localStorage.getItem("panierZ")); // JSON.parse() reforme l’objet à partir de la chaîne
+
+    let s = 'Panier avant: \n';
+    /* panier.forEach( value =>  s += `(${value.id};${value.couleur};${value.quantite})` ); alert(s); */
+    s += panierToString(panier);
+    if (panier === null) {
+        panier = new Array(); panier.push(produitPanier);
+    } else {
+        const trouve = panier.find(element => element.id == produitPanier.id && element.couleur == produitPanier.couleur);
+        trouve === undefined ? panier.push(produitPanier) : trouve.quantite += produitPanier.quantite;
+    }
+
+    s += '\nPanier après: \n';
+    /* panier.forEach( value =>  s += "(" + value.id + ";" + value.couleur + ";" + value.quantite + ")"  ); alert(s); */
+    s += panierToString(panier);
+    alert(s);
+
+    // Mettre le Panier modifié dans le localStorage
+    localStorage.setItem("panierZ", JSON.stringify(panier)); // JSON.stringify() transforme l'objet panier en chaine de caractères
 }
 
 const produitId = getValeurParametreURLpageCourante("id"); // alert(produitId);
 
 afficherLeProduit(produitId);
-ajouterPanier(produitId);
+
+/* Déclenché Au clic sur le bouton "Ajouter au panier" */
+document.querySelector("#addToCart").addEventListener('click', (evt) => {
+    const couleur = lireCouleur();
+    const quantite = lireQuantite();
+    const produitPanier = creerProduitPanier(produitId, couleur, quantite); /* alert( produitPanierToString(null) ); */
+
+    ajouterPanier(produitPanier); alert('Ce Produit a été ajouté au Panier');
+});
