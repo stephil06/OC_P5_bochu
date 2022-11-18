@@ -100,7 +100,8 @@ Panier : un array contenant des produitPanier i.e. 3 caractéristiques: son id, 
 Si le panier est vide : on ajoute produitPanier
 Lorsqu’on ajoute un produit au panier : 
     - Si celui-ci n'existe pas dans le panier, on ajoute au Panier produitPanier
-    - Si celui-ci existe déjà dans le panier (même id + même couleur), on augmente sa quantité.
+    - Si celui-ci existe déjà dans le panier (même id + même couleur) :
+            Si qte + la qte qui existe dans le panier n'est pas supérieur à 100 on augmente sa quantité.
 */
 const ajouterPanier = (produitPanier) => {
     // localStorage.clear();
@@ -110,11 +111,20 @@ const ajouterPanier = (produitPanier) => {
     let s = 'Panier avant: \n';
     /* panier.forEach( value =>  s += `(${value.id};${value.couleur};${value.quantite})` ); alert(s); */
     s += panierToString(panier);
+    let ajout = true;
     if (panier === null) {
         panier = new Array(); panier.push(produitPanier);
     } else {
         const trouve = panier.find(element => element.id == produitPanier.id && element.couleur == produitPanier.couleur);
-        trouve === undefined ? panier.push(produitPanier) : trouve.quantite += produitPanier.quantite;
+        // trouve === undefined ? panier.push(produitPanier) : trouve.quantite += produitPanier.quantite;
+        if (trouve === undefined)
+            panier.push(produitPanier);
+        else if (trouve.quantite + produitPanier.quantite <= 100) {
+            trouve.quantite += produitPanier.quantite;
+        } else {
+            ajout = false;
+            alert(`Désolé on ne peut ajouter un tel nombre ! (On a en déjà ${trouve.quantite} dans le panier)`);
+        }
     }
 
     s += '\nPanier après: \n';
@@ -122,8 +132,13 @@ const ajouterPanier = (produitPanier) => {
     s += panierToString(panier);
     alert(s);
 
-    // Mettre le Panier modifié dans le localStorage
-    localStorage.setItem("panierZ", JSON.stringify(panier)); // JSON.stringify() transforme l'objet panier en chaine de caractères
+    if (ajout) {
+        // Mettre le Panier modifié dans le localStorage
+        localStorage.setItem("panierZ", JSON.stringify(panier)); // JSON.stringify() transforme l'objet panier en chaine de caractères
+        alert("Ce Produit a été ajouté au Panier. Vous allez être redirigé sur la page Panier.");
+        window.location.href = 'cart.html';
+    }
+
 }
 
 // -------------------------------------------------------------------------------------------------------
@@ -149,5 +164,5 @@ document.querySelector("#addToCart").addEventListener('click', (evt) => {
     const quantite = lireQuantite();
     const produitPanier = creerProduitPanier(produitId, couleur, quantite); /* alert( produitPanierToString(null) ); */
 
-    ajouterPanier(produitPanier); alert('Ce Produit a été ajouté au Panier');
+    ajouterPanier(produitPanier);
 });
