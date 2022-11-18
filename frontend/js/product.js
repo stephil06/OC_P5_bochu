@@ -22,13 +22,17 @@ const updateDomLeProduit = (produit) => {
                   <option value="">--SVP, choisissez une couleur --</option>
     <!--          <option value="vert">vert</option>
                   <option value="blanc">blanc</option> --> */
-    let listeCouleurs = '';
+    let listeCouleurs = '<option value="">--SVP, choisissez une couleur --</option>';
+
+    // essayer avec MAP()
+
     produit.colors.forEach(
         (couleur) => {
             listeCouleurs += `<option value="${couleur}">${couleur}</option>`;
         });
-    document.querySelector("#colors").innerHTML += listeCouleurs;
+    document.querySelector("#colors").innerHTML = listeCouleurs;
 }
+
 
 /* Récupère la Couleur de la balise <select id="colors"> 
     Si couleur = '' affiche un message d'erreur
@@ -52,7 +56,7 @@ const lireQuantite = () => {
 
 /* Crée un produit du panier avec la structure {id, couleur, quantite} */
 const creerProduitPanier = (produitId, produitCouleur, produitQuantite) => {
-    return  {
+    return {
         id: produitId,
         couleur: produitCouleur,
         quantite: produitQuantite
@@ -63,9 +67,14 @@ const creerProduitPanier = (produitId, produitCouleur, produitQuantite) => {
  - Met à jour le DOM avec les caractéristiques du produit
 */
 async function afficherLeProduit(produitId) {
-    const produit = await get(`http://localhost:3000/api/products/${produitId}`);
 
-    if (produit === -1) { alert('Problème du serveur'); }
+    const produit = await get(`http://localhost:3000/api/products/${produitId}`); // alert(produit._id);
+
+    if (produit === -1) { alert("Problème du serveur. Veuillez nous contacter à support@name.com"); exit; }
+    if (produit._id == undefined) {
+        alert("Ce produit n'existe pas ! Vous allez être redirigé sur la page d'accueil.");
+        window.location.href = 'index.html';
+    }
     else {
         updateDomLeProduit(produit);
     }
@@ -117,7 +126,20 @@ const ajouterPanier = (produitPanier) => {
     localStorage.setItem("panierZ", JSON.stringify(panier)); // JSON.stringify() transforme l'objet panier en chaine de caractères
 }
 
+// -------------------------------------------------------------------------------------------------------
+// CORPS -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------------
+
 const produitId = getValeurParametreURLpageCourante("id"); // alert(produitId);
+
+/*
+ // récupérer (du localStorage) la liste des produits pour avoir la liste des _id
+const listeProduits = JSON.parse(localStorage.getItem("listeProduits")); // alert(listeProduits);
+
+const produit = getProduit(listeProduits, produitId); // alert(produit);
+
+if(produit == undefined) alert('Identifiant du produit inexistant');
+*/
 
 afficherLeProduit(produitId);
 

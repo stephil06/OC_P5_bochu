@@ -1,12 +1,5 @@
 // ------- Fonctions utilisées par les Règles Métiers du Panier ------------------------
 
-/* Retourne le Produit de la listeProduits ayant pour id = idProduit passé en argument 
-    pour récupérer ses caractéristiques dont le Prix
-*/
-const getProduit = (listeProduits, idProduit) => {
-    return listeProduits.find(element => element._id == idProduit);
-}
-
 /* Retourne le nombre de produits du Panier */
 const getPanierQuantite = (panier) => {
     let quantite = 0;
