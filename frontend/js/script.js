@@ -51,6 +51,10 @@ const afficherTousLesProduits = async () => {
     if (listeProduits === -1) { alert('Problème du serveur'); }
     else {
         updateDomListeProduits(listeProduits);
+
+        // Mettre la liste des Produits dans le localStorage
+        localStorage.setItem("listeProduits", JSON.stringify(listeProduits));
+
     }
 }
 
