@@ -51,6 +51,7 @@ Lorsqu’on ajoute un produit au panier :
 */
 const ajouterPanier = (produitPanier) => {
     // localStorage.clear();
+    const quantiteMax = 100;
     // Récupérer le Panier à partir du localStorage 
     let panier = JSON.parse(localStorage.getItem("panierZ")); // JSON.parse() reforme l’objet à partir de la chaîne
 
@@ -65,11 +66,12 @@ const ajouterPanier = (produitPanier) => {
         // trouve === undefined ? panier.push(produitPanier) : trouve.quantite += produitPanier.quantite;
         if (trouve === undefined)
             panier.push(produitPanier);
-        else if (trouve.quantite + produitPanier.quantite <= 100) {
+        else if (trouve.quantite + produitPanier.quantite <= quantiteMax) {
             trouve.quantite += produitPanier.quantite;
         } else {
-            ajout = false;
-            alert(`Désolé on ne peut ajouter un tel nombre ! (On a en déjà ${trouve.quantite} dans le panier)`);
+            ajout = false; const qte = quantiteMax - trouve.quantite;
+            const message = `Désolé, on ne peut ajouter un tel nombre !\nOn en a déjà ${trouve.quantite} dans le panier.\nPour cette référence, vous pouvez donc ajouter jusqu'à ${qte} articles.`;
+            alert(message);
         }
     }
 
