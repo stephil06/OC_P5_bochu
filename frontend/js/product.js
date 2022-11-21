@@ -22,15 +22,24 @@ const updateDomLeProduit = (produit) => {
                   <option value="">--SVP, choisissez une couleur --</option>
     <!--          <option value="vert">vert</option>
                   <option value="blanc">blanc</option> --> */
+
+/*
     let listeCouleurs = '<option value="">--SVP, choisissez une couleur --</option>';
-
-    // essayer avec MAP()
-
     produit.colors.forEach(
         (couleur) => {
             listeCouleurs += `<option value="${couleur}">${couleur}</option>`;
         });
     document.querySelector("#colors").innerHTML = listeCouleurs;
+    */
+
+    // essayer avec MAP()
+    // On crée un nouveau tableau
+    // const tab2 = tab.map(valeur => valeur*2); 
+    // let somme = tab2.reduce( (total, valeur ) => total + valeur);
+
+    const tabCouleurs = produit.colors.map(couleur => `<option value="${couleur}">${couleur}</option>`);
+    let s = '<option value="">--SVP, choisissez une couleur --</option>' + tabCouleurs.reduce((total, valeur) => total + valeur);
+    document.querySelector("#colors").innerHTML = s;
 }
 
 
