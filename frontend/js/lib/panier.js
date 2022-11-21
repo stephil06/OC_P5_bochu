@@ -1,0 +1,102 @@
+/* Récupère la Couleur de la balise <select id="colors"> 
+    Si couleur = '' affiche un message d'erreur
+    Sinon : retourne la couleur
+*/
+const lireCouleur = () => {
+    const couleur = document.querySelector("#colors").value;
+    if (couleur === '') { alert("Merci de renseigner une couleur"); exit; }
+    return couleur;
+}
+
+/* Récupère la quantite de la balise <input type="number" id="quantity"> 
+    Si quantite invalide affiche un message d'erreur
+    Sinon : retourne la quantite
+*/
+const lireQuantite = () => {
+    const quantite = parseInt(document.querySelector("#quantity").value, 10);
+    if (quantite <= 0 || quantite > 100) { alert("Merci de renseigner un nombre d'article(s) (compris entre 1 & 100)"); exit; }
+    return quantite;
+}
+
+/* Crée un produit du panier avec la structure {id, couleur, quantite} */
+const creerProduitPanier = (produitId, produitCouleur, produitQuantite) => {
+    return {
+        id: produitId,
+        couleur: produitCouleur,
+        quantite: produitQuantite
+    };
+}
+
+/* Retourne le produitPanier sous la forme : (id;couleur;quantite) */
+const produitPanierToString = (produitPanier) => {
+    return produitPanier === null ? '' : `(${produitPanier.id};${produitPanier.couleur};${produitPanier.quantite})`;
+}
+
+/* Retourne les produits du Panier */
+const panierToString = (panier) => {
+    let s = '';
+    panier === null ? s = '' : panier.forEach(value => s += produitPanierToString(value));
+    return s;
+}
+
+/* Ajout du produitPanier dans le Panier puis ajout du Panier dans le localStorage (cf https://tutowebdesign.com/localstorage-javascript.php)
+
+Panier : un array contenant des produitPanier i.e. 3 caractéristiques: son id, sa couleur, sa quantité
+
+Si le panier est vide : on ajoute produitPanier
+Lorsqu’on ajoute un produit au panier : 
+    - Si celui-ci n'existe pas dans le panier, on ajoute au Panier produitPanier
+    - Si celui-ci existe déjà dans le panier (même id + même couleur) :
+            Si qte + la qte qui existe dans le panier n'est pas supérieur à 100 on augmente sa quantité.
+*/
+const ajouterPanier = (produitPanier) => {
+    // localStorage.clear();
+    // Récupérer le Panier à partir du localStorage 
+    let panier = JSON.parse(localStorage.getItem("panierZ")); // JSON.parse() reforme l’objet à partir de la chaîne
+
+    let s = 'Panier avant: \n';
+    /* panier.forEach( value =>  s += `(${value.id};${value.couleur};${value.quantite})` ); alert(s); */
+    s += panierToString(panier);
+    let ajout = true;
+    if (panier === null) {
+        panier = new Array(); panier.push(produitPanier);
+    } else {
+        const trouve = panier.find(element => element.id == produitPanier.id && element.couleur == produitPanier.couleur);
+        // trouve === undefined ? panier.push(produitPanier) : trouve.quantite += produitPanier.quantite;
+        if (trouve === undefined)
+            panier.push(produitPanier);
+        else if (trouve.quantite + produitPanier.quantite <= 100) {
+            trouve.quantite += produitPanier.quantite;
+        } else {
+            ajout = false;
+            alert(`Désolé on ne peut ajouter un tel nombre ! (On a en déjà ${trouve.quantite} dans le panier)`);
+        }
+    }
+
+    s += '\nPanier après: \n';
+    /* panier.forEach( value =>  s += "(" + value.id + ";" + value.couleur + ";" + value.quantite + ")"  ); alert(s); */
+    s += panierToString(panier);
+    alert(s);
+
+    if (ajout) {
+        // Mettre le Panier modifié dans le localStorage
+        localStorage.setItem("panierZ", JSON.stringify(panier)); // JSON.stringify() transforme l'objet panier en chaine de caractères
+        alert("Ce Produit a été ajouté au Panier. Vous allez être redirigé sur la page Panier.");
+        window.location.href = 'cart.html';
+    }
+}
+
+/* Fonction déclenchée Au clic sur le bouton "Ajouter au panier" de la page "product.html"
+    - lire la couleur
+    - lire la quantité
+    - ajouter au panier le produit du Panier {id, couleur, quantité}
+*/
+const ajouterPanierIhm = (produitId) => {
+
+    document.querySelector("#addToCart").addEventListener('click', (evt) => {
+        const couleur = lireCouleur();
+        const quantite = lireQuantite();
+        const produitPanier = creerProduitPanier(produitId, couleur, quantite); // alert( produitPanierToString(null) );
+        ajouterPanier(produitPanier);
+    });
+}
