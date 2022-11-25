@@ -70,7 +70,9 @@ const ajouterPanier = (produitPanier) => {
             trouve.quantite += produitPanier.quantite;
         } else {
             ajout = false; const qte = quantiteMax - trouve.quantite;
-            const message = `Désolé, on ne peut ajouter un tel nombre !\nOn en a déjà ${trouve.quantite} dans le panier.\nPour cette référence, vous pouvez donc ajouter jusqu'à ${qte} articles.`;
+            let message;
+            (qte != 0) ? message = `Désolé, on ne peut ajouter un tel nombre !\nOn en a déjà ${trouve.quantite} dans le panier.\nPour cette référence, vous pouvez donc ajouter jusqu'à ${qte} articles.`
+                : message = `Désolé, on ne peut ajouter un tel nombre !\nOn en a déjà ${trouve.quantite} dans le panier.\nPour cette référence, vous ne pouvez plus ajouter d'article.`;
             alert(message);
         }
     }
