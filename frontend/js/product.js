@@ -46,7 +46,6 @@ const updateDomLeProduit = (produit) => {
  - Met à jour le DOM avec les caractéristiques du produit
 */
 const afficherLeProduit = async (produitId) => {
-    // async function afficherLeProduit(produitId) {
 
     const produit = await get(`http://localhost:3000/api/products/${produitId}`); // alert(produit._id);
 
@@ -60,12 +59,24 @@ const afficherLeProduit = async (produitId) => {
     }
 }
 
+const initProduitDetail = () => {
+
+    const produitId = getValeurParametreURLpageCourante("id"); // alert(produitId);
+
+    afficherLeProduit(produitId);
+
+    // ajouterPanierIhm(produitId); // fonction du fichier lib/panier.js
+
+    // déclenché Au clic sur le bouton "Ajouter au panier"
+    document.querySelector("#addToCart").addEventListener('click', (evt) => {
+        const couleur = lireCouleur();
+        const quantite = lireQuantite();
+        const produitPanier = creerProduitPanier(produitId, couleur, quantite); // alert( produitPanierToString(null) );
+        ajouterPanier(produitPanier);
+    });
+}
+
 // -------------------------------------------------------------------------------------------------------
 // CORPS -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------------
-
-const produitId = getValeurParametreURLpageCourante("id"); // alert(produitId);
-
-afficherLeProduit(produitId);
-
-ajouterPanierIhm(produitId); // fonction du fichier lib/panier.js
+initProduitDetail();

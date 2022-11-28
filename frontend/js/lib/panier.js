@@ -1,3 +1,7 @@
+/* import {getLocalStorage} from './localStorage.js';
+import {setLocalStorage} from './localStorage.js'; */
+
+
 /* Récupère la Couleur de la balise <select id="colors"> 
     Si couleur = '' affiche un message d'erreur
     Sinon : retourne la couleur
@@ -13,7 +17,7 @@ const lireCouleur = () => {
     Sinon : retourne la quantite
 */
 const lireQuantite = () => {
-    const quantite = parseInt(document.querySelector("#quantity").value, 10);
+    const quantite = parseInt(document.querySelector("#quantity").value);
     if (quantite <= 0 || quantite > 100) { alert("Merci de renseigner un nombre d'article(s) (compris entre 1 & 100)"); exit; }
     return quantite;
 }
@@ -53,17 +57,20 @@ const ajouterPanier = (produitPanier) => {
     // localStorage.clear();
     const quantiteMax = 100;
     // Récupérer le Panier à partir du localStorage 
-    let panier = JSON.parse(localStorage.getItem("panierZ")); // JSON.parse() reforme l’objet à partir de la chaîne
+    // let panier = JSON.parse(localStorage.getItem("panierZ")); // JSON.parse() reforme l’objet à partir de la chaîne
+    let panier = getLocalStorage("panierZ");
 
     let s = 'Panier avant: \n';
     /* panier.forEach( value =>  s += `(${value.id};${value.couleur};${value.quantite})` ); alert(s); */
     s += panierToString(panier);
     let ajout = true;
+    debugger;
     if (panier === null) {
-        panier = new Array(); panier.push(produitPanier);
+        panier = []; 
+        panier.push(produitPanier);
     } else {
         const trouve = panier.find(element => element.id == produitPanier.id && element.couleur == produitPanier.couleur);
-        // trouve === undefined ? panier.push(produitPanier) : trouve.quantite += produitPanier.quantite;
+
         if (trouve === undefined)
             panier.push(produitPanier);
         else if (trouve.quantite + produitPanier.quantite <= quantiteMax) {
@@ -84,23 +91,9 @@ const ajouterPanier = (produitPanier) => {
 
     if (ajout) {
         // Mettre le Panier modifié dans le localStorage
-        localStorage.setItem("panierZ", JSON.stringify(panier)); // JSON.stringify() transforme l'objet panier en chaine de caractères
+        // localStorage.setItem("panierZ", JSON.stringify(panier)); // JSON.stringify() transforme l'objet panier en chaine de caractères
+        setLocalStorage(panier, "panierZ");
         alert("Ce Produit a été ajouté au Panier. Vous allez être redirigé sur la page Panier.");
         window.location.href = 'cart.html';
     }
-}
-
-/* Fonction déclenchée Au clic sur le bouton "Ajouter au panier" de la page "product.html"
-    - lire la couleur
-    - lire la quantité
-    - ajouter au panier le produit du Panier {id, couleur, quantité}
-*/
-const ajouterPanierIhm = (produitId) => {
-
-    document.querySelector("#addToCart").addEventListener('click', (evt) => {
-        const couleur = lireCouleur();
-        const quantite = lireQuantite();
-        const produitPanier = creerProduitPanier(produitId, couleur, quantite); // alert( produitPanierToString(null) );
-        ajouterPanier(produitPanier);
-    });
 }

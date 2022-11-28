@@ -34,28 +34,21 @@ const updateDomListeProduits = listeProduits => {
     document.querySelector(".items").innerHTML = lesCards;
 }
 
-/* TEMPLATE :
-fetch(url, options)
-.then(response => response.json())
-.then(result =>  process result ); 
-.catch(function (error) {
-    alert("Problème du serveur");
-});
-*/
-
-
 const afficherTousLesProduits = async () => {
     // URL de l'API de tous les produits
     const listeProduits = await get('http://localhost:3000/api/products');
 
-    if (listeProduits === -1) { alert('Problème du serveur'); }
+    if (listeProduits === -1) { alert('Problème du serveur. Veuillez nous contacter à support@name.com'); }
     else {
         updateDomListeProduits(listeProduits);
 
         // Mettre la liste des Produits dans le localStorage
-        localStorage.setItem("listeProduits", JSON.stringify(listeProduits));
-
+       //  localStorage.setItem("listeProduits", JSON.stringify(listeProduits));
+        setLocalStorage(listeProduits, "listeProduits");
     }
 }
 
+// -------------------------------------------------------------------------------------------------------
+// CORPS -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------------
 afficherTousLesProduits();
