@@ -3,7 +3,6 @@
 /* Retourne true ssi le panier est vide
    Si le panier est vide : affiche un message et redirige sur la homepage 
 */
-debugger;
 
 const panierVide = (panier) => {
     let vide = false;
@@ -53,6 +52,7 @@ const getPanierPrix = (panier, listeProduits) => {
 /* Retourne à partir du Panier le Card HTML du produitPanier ayant pour id = idProduit & pour couleur = pCouleur */
 const getPanierCardHTML = (panier, listeProduits, idProduit, pCouleur) => {
     // récupérer les caractéristiques du produit
+    debugger;
     const produit = getProduit(listeProduits, idProduit);
     const produitPanier = getProduitPanier(panier, idProduit, pCouleur);
 
@@ -144,7 +144,7 @@ const afficherPanier = (panier, listeProduits) => {
     /* document.querySelector("#cart__items").innerHTML = getPanierCards(panier, listeProduits);
      document.querySelector("#totalQuantity").innerHTML = getPanierQuantite(panier);
      document.querySelector("#totalPrice").innerHTML = getPanierPrix(panier, listeProduits); */
-
+    debugger;
     let listeProduitsDOM = document.querySelector("#cart__items");
     /*
     for (i = 0; i < panier.length; i++) {
@@ -238,6 +238,7 @@ const envoyerAPICommande = async (commande) => {
 }
 
 const initPanier = () => {
+    debugger;
     // ---------------------------------------------------------------------------------------------------
     // --------- Le Panier -------------------------------------------------------------------------------
     // ---------------------------------------------------------------------------------------------------
@@ -245,17 +246,20 @@ const initPanier = () => {
     let panier = getLocalStorage(panierLS);
 
     let s = 'listeProduits'; let o = localStorage.getItem('listeProduits'); alert("o: " + o);
-    const listeProduits = JSON.parse(o);; alert("produits:" + listeProduits);
+    const listeProduits = localStorage.getItem(listeProduitsLS); // JSON.parse(o);
+    
+    alert("produits:" + listeProduits);
 
 
     // const listeProduits = JSON.parse(localStorage.getItem("listeProduits")); alert("produits:" + listeProduits);
 
     // let panier4 = JSON.parse(localStorage.getItem('panierZ'));
-    alert("toto:" + panier); // let panier = panier4;
+    alert("Panier:" + panier); // let panier = panier4;
 
     if (!panierVide(panier)) { // Si panierVide(), redirection vers la homepage
         // récupérer (du localStorage) la liste des produits (pour avoir les Prix)
-        const listeProduits = getLocalStorage(listeProduitsLS);
+        
+        const listeProduits = getLocalStorage(listeProduitsLS); alert("ListeProduits:" + listeProduits);
         afficherPanier(panier, listeProduits);
 
         // Au changement de valeur de chaque <input> de classe '.itemQuantity' : MODIFIER DANS LE PANIER LA QUANTITE de chaque produit
@@ -413,10 +417,10 @@ const initPanier = () => {
                 }
                 */
 
+            
                 const orderId = await envoyerAPICommande(commande);
                 (orderId == -1) ? alert("Problème du serveur. Veuillez nous contacter à support@name.com\nDésolé, votre commande n'est pas validée.")
                     : window.location.href = `confirmation.html?id=${orderId}`;
-
             }
         });
 }

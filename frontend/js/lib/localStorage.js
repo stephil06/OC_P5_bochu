@@ -9,9 +9,9 @@ function realTypeof(obj) {
 
 /* Retourne à partir du localStorage l'objet stocké de nom element */
 const getLocalStorage = (nomObjet) => {
-    /*  let o = JSON.parse(localStorage.getItem(nomObjet));
-     return o; */ let panier;
-    return panier = JSON.parse(localStorage.getItem('panierZ'));
+     let o = JSON.parse(localStorage.getItem(nomObjet));
+     return o; //  let panier;
+    // return panier = JSON.parse(localStorage.getItem('panierZ'));
 }
 
 /* Met dans le localStorage l'objet de nom nomObjet */
@@ -24,5 +24,5 @@ const setLocalStorage = (objet, nomObjet) => {
 }
 
 /* constantes de nommmage des localStorages */
-var listeProduitsLS = "listeProduits";
-var panierLS = "panierZ";
+const listeProduitsLS = "listeProduits";
+const panierLS = "panierZ";
