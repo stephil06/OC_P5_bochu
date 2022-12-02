@@ -1,7 +1,5 @@
-/* Fichier JS de la page d'accueil :
-    - pour afficher tous les produits de l'API 
+/* Fichier JS de la page d'accueil : pour afficher tous les produits de l'API 
 */
-
 
 /* Met à jour le DOM avec les caractéristiques des produits de l'API passés en paramètre 
     dans la <section class="items" id="items"> 
@@ -43,8 +41,8 @@ const afficherTousLesProduits = async () => {
         updateDomListeProduits(listeProduits);
 
         // Mettre la liste des Produits dans le localStorage
-       //  localStorage.setItem("listeProduits", JSON.stringify(listeProduits));
-        setLocalStorage(listeProduits, "listeProduits");
+        //  localStorage.setItem("listeProduits", JSON.stringify(listeProduits));
+        setLocalStorage(listeProduits, listeProduitsLS);
     }
 }
 

@@ -86,9 +86,24 @@ const inputsFormulaireTousOK = () => {
 
     let ok = true;
     nomInputsFormulaire.forEach(
-        nom => { ok = inputFormulaireOK(nom); if (!ok) return ok; }
+        nom => { if (!inputFormulaireOK(nom)) ok = false; }
     );
     return ok;
     /*       return inputFormulaireOK('firstName') && inputFormulaireOK('lastName') && inputFormulaireOK('address')
                 && inputFormulaireOK('city') && inputFormulaireOK('email'); */
+}
+
+
+/* Retourne true ssi un <input> du formulaire comporte une valeur */
+const isInputFormulaireSaisie = () => {
+    const nomInputsFormulaire = getNomInputsFormulaire();
+
+    let saisie = false;
+    nomInputsFormulaire.forEach(
+        nom => {
+            if (document.getElementById(nom).value != '') saisie = true;
+        }
+    );
+    // alert(saisie);
+    return saisie;
 }
