@@ -39,14 +39,16 @@ const afficherTousLesProduits = async () => {
     if (listeProduits === -1) { alert('Problème du serveur. Veuillez nous contacter à support@name.com'); }
     else {
         updateDomListeProduits(listeProduits);
-
-        // Mettre la liste des Produits dans le localStorage
-        //  localStorage.setItem("listeProduits", JSON.stringify(listeProduits));
-        setLocalStorage(listeProduits, listeProduitsLS);
+        // ne pas mettre la liste des Produits dans le localStorage : ON NE DOIT PAS STOCKER LE PRIX !!! (cf. cachier des charges)
     }
 }
 
 // -------------------------------------------------------------------------------------------------------
 // CORPS -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------------
+// window.localStorage.clear();
+/* alert ( localStorage.length);
+var key; for (var i = 0; i < localStorage.length; i++) { key = localStorage.key(i); alert(key); }
+*/
+
 afficherTousLesProduits();

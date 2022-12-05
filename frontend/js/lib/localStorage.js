@@ -23,6 +23,3 @@ const setLocalStorage = (objet, nomObjet) => {
     // localStorage.setItem("panierZ", JSON.stringify(panier));
 }
 
-/* constantes de nommmage des localStorages */
-const listeProduitsLS = "listeProduits";
-const panierLS = "panierZ";
