@@ -1,28 +1,6 @@
 // ------- Fonctions utilisées par les Règles Métiers du Panier ------------------------
 // Récupération des produits de l'API
 
-/* A partir de l'API en question : récupérer le produit ayant pout idProduit produitId (passé en argument) */
-// const getProductById = async (produitId) => {
-/* return fetch(`http://localhost:3000/api/products/${produitId}`)
-    .then(function (res) {
-        return res.json();
-    })
-    .catch((err) => {
-        // Erreur serveur
-        console.log("erreur");
-    })
-    .then(function (response) {
-        return response;
-    });
-    */
-/* const produit = await get(`http://localhost:3000/api/products/${produitId}`); // alert(produit._id);
-
-if (produit === -1) { alert("Problème du serveur. Veuillez nous contacter à support@name.com"); exit; }
-else {
-    return produit;
-}
-}*/
-
 /* A partir de l'API en question : récupérer le produit ayant pout idProduit produitId (passé en argument) 
  (via get() de requestAPI.js) 
 */
@@ -35,13 +13,12 @@ const getProduitAPI = async (produitId) => {
     }
 }
 
-
-/* Retourne true ssi le panier est vide
+/* Retourne true ssi le panier (passé en argument) est vide
    Si le panier est vide : affiche un message et redirige sur la homepage 
 */
 const panierVide = (panier) => {
     let vide = false;
-    if (panier == null || panier.length == 0) {
+    if (panier === null || panier.length === 0) {
         vide = true;
         alert("Panier vide ! Vous allez être redirigé sur la page d'accueil.");
         window.location.href = 'index.html';
@@ -72,12 +49,13 @@ const getPanierPrix = async (panier) => {
         const produit = await getProduitAPI(panier[i].id);
         prixTotal += parseFloat(produit.price * panier[i].quantite);
     }
-    alert(`Prix total: ${prixTotal}`);
+    // alert(`Prix total: ${prixTotal}`);
     return prixTotal;
 }
 
 /* Retourne à partir du Panier le Card HTML du produitPanier ayant pour id = idProduit & pour couleur = pCouleur */
 const getPanierCardHTML = (panier, produit, idProduit, pCouleur, prix) => {
+    const quantiteMaxiPanier = 100;
 
     const produitPanier = getProduitPanier(panier, idProduit, pCouleur); // pour récupérer la quantité du produit du Panier
     const prix_format = new Intl.NumberFormat().format(prix); // formater le prix
@@ -111,33 +89,40 @@ const getPanierCardHTML = (panier, produit, idProduit, pCouleur, prix) => {
 }
 
 /* Modifie dans le Panier la quantite du produit 
- ayant pour id idProduit & couleur pCouleur pour la quantite quantiteModifiee passés en argument 
- Puis Modifie le LocalStorage du Panier
- Retourne le Panier après Modification
+        ayant pour id idProduit & couleur pCouleur pour la quantite quantiteModifiee passés en argument 
+   Puis stocke le Panier modifié dans le LocalStorage
+   Retourne le Panier modifié
 */
 const setPanierQuantite = (panier, idProduit, pCouleur, quantiteModifiee) => {
-    // let trouve = panier.find(element => element.id == idProduit && element.couleur == pCouleur);
+    // let trouve = panier.find(element => element.id === idProduit && element.couleur === pCouleur);
     let trouve = getProduitPanier(panier, idProduit, pCouleur);
 
     qteAvant = trouve.quantite;
-    // Modifie la quantite dans le Panier, puis au LocalStorage du Panier
+    // Modifie la quantite dans le Panier, puis stocke le Panier modifié dans le LocalStorage
     trouve.quantite = quantiteModifiee;
-    // localStorage.setItem("panierZ", JSON.stringify(panier));
-    setLocalStorage(panier, "panierZ");
+
+    localStorage.setItem("panierZ", JSON.stringify(panier));
+    // setLocalStorage(panier, "panierZ");
+
     return panier;
 }
 
 /* Supprime du Panier le produit dont id = idProduit & couleur = pCouleur (passés en argument) 
-Puis Modifie le LocalStorage du Panier
+ Puis stocke le Panier modifié dans le LocalStorage
+ Retourne le panier modifié
 */
 const removePanierProduit = (panier, idProduit, pCouleur) => {
-    // const trouve = panier.find(element => element.id == idProduit && element.couleur == pCouleur);
+    // const trouve = panier.find(element => element.id === idProduit && element.couleur === pCouleur);
     const trouve = getProduitPanier(panier, idProduit, pCouleur);
 
-    /* template : let nbr = 6; var tab = [3, 6, 8]; tab = tab.filter(item => item !== nbr) */
+    /* template pour supprimer un élément d'un tableau : 
+    let nbr = 6; var tab = [3, 6, 8]; tab = tab.filter(item => item !== nbr) 
+    */
     let panier2 = panier.filter(item => item != trouve);
-    // localStorage.setItem("panierZ", JSON.stringify(panier));
-    setLocalStorage(panier2, "panierZ");
+
+    localStorage.setItem("panierZ", JSON.stringify(panier2));
+    // setLocalStorage(panier2, "panierZ");
+
     return panier2;
 }
 
@@ -145,10 +130,10 @@ const removePanierProduit = (panier, idProduit, pCouleur) => {
 // Règles METIERS ----------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------------
 
-/* Afficher les totaux du Panier (i.e Quantité totale & Prix Total du panier */
-// const afficherPanierTotaux = (panier, listeProduits) => {
+/* Afficher les totaux du Panier (i.e Quantité totale & Prix Total du panier 
+    NB: Quantité totale & Prix Total sont formatés (séparateur de millier)    
+*/
 const afficherPanierTotaux = async (panier) => {
-
     let quantiteTotale = 0;
     let prixTotal = 0;
 
@@ -173,7 +158,11 @@ const afficherPanierTotaux = async (panier) => {
     document.getElementById("totalPrice").innerHTML = prix_format;
 }
 
-/* Afficher le Panier (i.e. ses Produits) & ses totaux (Quantité totale &  Prix total) 
+/* - Afficher le Panier (i.e. ses Produits) & ses totaux (Quantité totale &  Prix total)
+   - Pour chaque référence du panier (même idProduit & même couleur), on a la possibilité de : 
+        - Modifier sa quantité (à chaque changement de valeur de l'<input> correspondant ".itemQuantity")
+        - la supprimer (si clic sur l'élément correspondant "supprimer" ".deleteItem")
+
  cf. https://fr.javascript.info/modifying-document
 */
 const afficherPanier = async (panier) => {
@@ -183,7 +172,6 @@ const afficherPanier = async (panier) => {
     let s = '';
     for (i = 0; i < panier.length; i++) {
         const product = await getProduitAPI(panier[i].id); const prix2 = product.price; // alert("prix: " + parseFloat(product.price) );
-        const totalPriceItem = (product.price *= panier[i].quantity);
         s += getPanierCardHTML(panier, product, panier[i].id, panier[i].couleur, prix2);
     }
     listeProduitsDOM.insertAdjacentHTML("beforeend", s);
@@ -200,17 +188,15 @@ const afficherPanier = async (panier) => {
     afficherPanierTotaux(panier); // alert(`prix panier: {gettPanierPrix(panier)}`);
 
     // Au changement de valeur de chaque <input> de classe '.itemQuantity' : MODIFIER DANS LE PANIER LA QUANTITE de chaque produit
-    // modifierPanierQuantite(panier);
+    // modifierPanierQuantite(panier, event);
     const quantityInputs = document.querySelectorAll(".itemQuantity");
     quantityInputs.forEach((quantityInput) => {
         quantityInput.addEventListener("change", (event) => {
 
-            const inputValue = event.target.value;
-
             // récupérer la quantité modifiée
             const quantiteModifiee = parseInt(event.target.value); // alert(quantiteModifiee);
+            const quantiteMaxiPanier = 100;
             if (quantiteModifiee <= 0 || quantiteModifiee > quantiteMaxiPanier) {
-                // alert("Merci de renseigner un nombre de produit(s) (compris entre 1 & 100)"); exit;
                 alert(`Merci de renseigner un nombre de produit(s) (compris entre 1 & ${quantiteMaxiPanier})`); exit;
             }
 
@@ -228,7 +214,7 @@ const afficherPanier = async (panier) => {
 
     // Au clic sur chaque <p> de classe '.deleteItem' : SUPPRIMER DU PANIER LE PRODDUIT en question
     // cf. https://fr.javascript.info/modifying-document
-    // retirerPanierProduit(panier);
+    // retirerPanierProduit(panier, event);
     const deleteProduits = document.querySelectorAll(".deleteItem");
     deleteProduits.forEach((input) => {
         // au clic sur chaque <p> '.deleteItem'
@@ -247,14 +233,16 @@ const afficherPanier = async (panier) => {
                         + "Souhaitez-vous supprimer ce produit ?"
                     suppression = confirm(s);
                     if (suppression) {
-                        let panier2 = removePanierProduit(panier, idProduit, couleur); panier = panier2;
+                        let panier2 = removePanierProduit(panier, idProduit, couleur);
+                        panier = panier2;
                         event.target.closest(".cart__item").remove();
                         // alert(`Quantité du panier: ${getPanierQuantite(panier)}`);
                         getPanierQuantite(panier) != 0 ? afficherPanierTotaux(panier) : window.location.href = 'cart.html';
                     }
                 }
                 else {
-                    let panier2 = removePanierProduit(panier, idProduit, couleur); panier = panier2;
+                    let panier2 = removePanierProduit(panier, idProduit, couleur);
+                    panier = panier2;
                     event.target.closest(".cart__item").remove();
                     // alert(`Quantité du panier: ${getPanierQuantite(panier)}`);
                     getPanierQuantite(panier) != 0 ? afficherPanierTotaux(panier) : window.location.href = 'cart.html';
@@ -268,8 +256,9 @@ const afficherPanier = async (panier) => {
 // ------- Fonctions du Formulaire -----------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------------
 
-/* Créer un objet "contact" (cf. Dossier de SPECIFICATIONS) 
- composé des champs :  firstName, lastName, address, city, email 
+/* Créer un objet JSON "contact" (cf. Dossier de SPECIFICATIONS) 
+ composé des champs :  firstName, lastName, address, city, email (cf. backend des sources du projet) 
+ avec les valeurs respectives passées en argument
 */
 const creerContact = (pFirstName, pLastName, pAddress, pCity, pEmail) => {
     return {
@@ -281,18 +270,21 @@ const creerContact = (pFirstName, pLastName, pAddress, pCity, pEmail) => {
     };
 }
 
-/* Retourne le produitPanier sous la forme : (id;couleur;quantite) */
+/* Retourne l'objet JSON "contact" sous la forme d'une chaîne : (firstName; lastName; address; city, email)
+*/
 const contactToString = (contact) => {
     return contact === null ? '' : `(${contact.firstName};${contact.lastName};${contact.address};${contact.city};${contact.email})`;
 }
 
-/* Créer un objet "commande" */
+/* Crée un objet JSON "commande" composé de 2 champs : "contact" & "products" (cf. backend des sources du projet) 
+    avec les valeurs respectives : - pContact (correspondant à l'objet JSON "contact")
+                                   - pIdProduitsPanier (array contenant les id des produits du Panier)
+*/
 const creerCommande = (pContact, pIdProduitsPanier) => {
     return { contact: pContact, products: pIdProduitsPanier };
 }
 
-
-/* Envoyer à l'API la commande passé en argument 
+/* Envoyer à l'API la commande passée en argument 
     Retourne -1 Si problème
     Retourne le n° de commande Sinon
 */
@@ -323,10 +315,15 @@ const initPanier = () => {
     // --------- Le Panier -------------------------------------------------------------------------------
     // ---------------------------------------------------------------------------------------------------
     // récupérer (du localStorage) le panier 
-    // localStorage.removeItem("panierZ"); 
-    // localStorage.clear(); 
-    alert(localStorage.length);
-    let panier = getLocalStorage("panierZ");
+
+    alert("Page panier");
+    //let panier = getLocalStorage("panierZ"); 
+
+    let panier = JSON.parse(localStorage.getItem('panierZ'));
+
+    alert("panier dans cart.js:" + panier);
+    alert("Nombre de clés du panier :" + localStorage.length);
+    // alert("Nb éléments du panier:" + panier.length);
 
     if (!panierVide(panier)) { // Si panierVide(), redirection vers la homepage
 
@@ -336,9 +333,10 @@ const initPanier = () => {
     // --------- Le Formulaire ------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------
 
-    // A chaque changement de valeur d'un <input> du formulaire : vérifier sa valeur
-    const nomInputsFormulaire = getNomInputsFormulaire(); // ['firstName', 'lastName', 'address', 'city', 'email'];
+    // Récupérer les <input> du formulaire i.e ['firstName', 'lastName', 'address', 'city', 'email'];
+    const nomInputsFormulaire = getNomInputsFormulaire();
 
+    // Pour chaque <input> du formulaire
     nomInputsFormulaire.forEach(
         input => {
             // alert(input);
@@ -349,7 +347,7 @@ const initPanier = () => {
         });
 
     // Au clic sur le bouton du formulaire "Commander"
-    document.querySelector("#order").addEventListener(// "click", (event) => {
+    document.querySelector("#order").addEventListener(//  "click", (event) => {
         "click", async function (event) {
             event.preventDefault();
 
@@ -375,14 +373,16 @@ const initPanier = () => {
                 // créer un objet "commande"
                 const commande = creerCommande(contact, tableauIdProduitsPanier);
 
-                // faire une requête POST cf. https://fr.javascript.info/fetch#requetes-post       
+                // faire une requête POST (cf. https://fr.javascript.info/fetch#requetes-post)
+                // Dans le cahier des charges : il est demandé de ne pas stocker le n° de commande (orderId)      
                 const orderId = await envoyerAPICommande(commande);
-                if (orderId == -1) {
+                if (orderId === -1) {
                     alert("Problème du serveur. Veuillez nous contacter à support@name.com\nDésolé, votre commande n'est pas validée.");
                 }
                 else {
+                    // redirection vers la page "confirmation.html?id= avec id = orderId"
                     window.location.href = `confirmation.html?id=${orderId}`;
-                    // vider le panier du localStorage
+                    // Retirer le panier du localStorage
                     localStorage.removeItem("panierZ");
                 }
             }
@@ -395,6 +395,3 @@ const initPanier = () => {
 // debugger;
 
 initPanier();
-
-
-

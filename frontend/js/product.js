@@ -1,6 +1,6 @@
-/* Fichier JS de la page "product.html?id=valeur" 
-    - pour afficher les caractéristiques du produit ayant pour id valeur
-    - Au clic sur le bouton "Ajouter au panier": ajouter le produit {id, couleur, quantité} dans le Panier
+/* Fichier JS de la page "product.html?id=idProduit" 
+    - pour afficher les caractéristiques du produit ayant pour id idProduit
+    - Au clic sur le bouton "Ajouter au panier": ajouter le produit JSON {id, couleur, quantité} dans le Panier
 */
 
 /* Met à jour le DOM avec les caractéristiques du produit passé en paramètre */
@@ -33,24 +33,27 @@ const updateDomLeProduit = (produit) => {
         */
 
     // essayer avec MAP()
-    // On crée un nouveau tableau
-    // const tab2 = tab.map(valeur => valeur*2); 
-    // let somme = tab2.reduce( (total, valeur ) => total + valeur);
+    /* TEMPLATE : On crée un nouveau tableau
+    const tab2 = tab.map(valeur => valeur*2); 
+    let somme = tab2.reduce( (total, valeur ) => total + valeur); */
 
     const tabCouleurs = produit.colors.map(couleur => `<option value="${couleur}">${couleur}</option>`);
     const s = '<option value="">--SVP, choisissez une couleur --</option>' + tabCouleurs.reduce((total, valeur) => total + valeur);
     document.querySelector("#colors").innerHTML = s;
 }
 
-/* Récupérer le produit de l'API en question (via get() de requestAPI.js) 
- - Met à jour le DOM avec les caractéristiques du produit
+/* Afficher le produit ayant pour id produitId (passé en argument)
+    Récupérer le produit de l'API en question (via get() de requestAPI.js) 
+    Si produit = -1 : affiche un message "problème du serveur"
+    Si produit = undefined : affiche un message "le produit n'existe pas" et redirection vers la page d'accueil.
+    Sinon : met à jour le DOM avec les caractéristiques du produit
 */
 const afficherLeProduit = async (produitId) => {
 
     const produit = await get(`http://localhost:3000/api/products/${produitId}`); // alert(produit._id);
 
     if (produit === -1) { alert("Problème du serveur. Veuillez nous contacter à support@name.com"); exit; }
-    if (produit._id == undefined) {
+    if (produit._id === undefined) {
         alert("Ce produit n'existe pas ! Vous allez être redirigé sur la page d'accueil.");
         window.location.href = 'index.html';
     }
@@ -64,8 +67,6 @@ const initProduitDetail = () => {
     const produitId = getValeurParametreURLpageCourante("id"); // alert(produitId);
 
     afficherLeProduit(produitId);
-
-    // ajouterPanierIhm(produitId); // fonction du fichier lib/panier.js
 
     // déclenché Au clic sur le bouton "Ajouter au panier"
     document.querySelector("#addToCart").addEventListener('click', (evt) => {

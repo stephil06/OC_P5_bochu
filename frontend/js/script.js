@@ -4,7 +4,7 @@
 /* Met à jour le DOM avec les caractéristiques des produits de l'API passés en paramètre 
     dans la <section class="items" id="items"> 
 */
-const updateDomListeProduits = listeProduits => {
+const updateDomListeProduits = (listeProduits) => {
 
     let lesCards = '';
     listeProduits.forEach((produit) => {
@@ -32,6 +32,10 @@ const updateDomListeProduits = listeProduits => {
     document.querySelector(".items").innerHTML = lesCards;
 }
 
+/* Afficher tous les produits récupérés de l'API 
+    Si problème de serveur, afficher un message
+    NB : les produits ne sont pas mis dans le localStorage : ON NE DOIT PAS STOCKER LE PRIX !!! (cf. cachier des charges)
+*/
 const afficherTousLesProduits = async () => {
     // URL de l'API de tous les produits
     const listeProduits = await get('http://localhost:3000/api/products');
@@ -46,9 +50,8 @@ const afficherTousLesProduits = async () => {
 // -------------------------------------------------------------------------------------------------------
 // CORPS -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------------
-// window.localStorage.clear();
-/* alert ( localStorage.length);
+
+alert (localStorage.length);
 var key; for (var i = 0; i < localStorage.length; i++) { key = localStorage.key(i); alert(key); }
-*/
 
 afficherTousLesProduits();
