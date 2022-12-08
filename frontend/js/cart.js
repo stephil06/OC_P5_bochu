@@ -98,17 +98,16 @@ const setPanierQuantite = (panier, idProduit, pCouleur, quantiteModifiee) => {
 
     // Modifie la quantite dans le Panier
     produitPanier.quantite = quantiteModifiee;
-    
-    // Stocke le Panier modifié dans le LocalStorage
-    localStorage.setItem("panierZ", JSON.stringify(panier));
-    // setLocalStorage(panier, "panierZ");
+
+    // Stocke dans le LocalStorage le Panier modifié 
+    setLocalStorage("panierZ", panier);
 
     return panier;
 }
 
 /* Supprime du Panier le produit dont id = idProduit & couleur = pCouleur (passés en argument) 
- Puis stocke le Panier modifié dans le LocalStorage
- Retourne le panier modifié
+   Puis stocke dans le LocalStorage le Panier modifié 
+   Retourne le panier modifié
 */
 const removePanierProduit = (panier, idProduit, pCouleur) => {
     const produitPanier = getProduitPanier(panier, idProduit, pCouleur);
@@ -118,8 +117,8 @@ const removePanierProduit = (panier, idProduit, pCouleur) => {
     */
     let panier2 = panier.filter(item => item != produitPanier);
 
-    localStorage.setItem("panierZ", JSON.stringify(panier2));
-    // setLocalStorage(panier2, "panierZ");
+    // Stocke dans le LocalStorage le Panier modifié 
+    setLocalStorage("panierZ", panier2);
 
     return panier2;
 }
@@ -145,8 +144,8 @@ const afficherPanierTotaux = async (panier) => {
     panier.forEach(
         async (produitPanier) => {
             const produit = await getProduitAPI(produitPanier.id);
-            quantiteTotale += parseInt(produitPanier.quantite); alert(`Quantité: ${quantiteTotale}`);
-            prixTotal += parseFloat(produit.price * produitPanier.quantite); alert(`Prix: ${prixTotal}`);
+            quantiteTotale += parseInt(produitPanier.quantite);
+            prixTotal += parseFloat(produit.price * produitPanier.quantite);
         });
     */
     const qte_format = new Intl.NumberFormat().format(quantiteTotale);
@@ -168,7 +167,7 @@ const afficherPanier = async (panier) => {
 
     let s = '';
     for (i = 0; i < panier.length; i++) {
-        const product = await getProduitAPI(panier[i].id); 
+        const product = await getProduitAPI(panier[i].id);
         const prix2 = product.price;
         s += getPanierCardHTML(panier, product, panier[i].id, panier[i].couleur, prix2);
     }
@@ -309,11 +308,9 @@ const initPanier = () => {
     // ---------------------------------------------------------------------------------------------------
     // --------- Le Panier -------------------------------------------------------------------------------
     // ---------------------------------------------------------------------------------------------------
-    // récupérer (du localStorage) le panier 
 
-    //let panier = getLocalStorage("panierZ"); 
-
-    let panier = JSON.parse(localStorage.getItem('panierZ'));
+    // Récupérer du localStorage le panier 
+    let panier = getLocalStorage("panierZ");
 
     if (!panierVide(panier)) { // Si panierVide(), redirection vers la homepage
         afficherPanier(panier);
@@ -341,7 +338,7 @@ const initPanier = () => {
 
             if (!inputsFormulaireTousOK()) alert("Désolé, impossible de commander s'il y a un champ invalide !");
             else {
-                // créer un objet "contact" (à partir des données du formulaire) et un tableau des idProduits du Panier
+                // créer un objet "contact" (à partir des données du formulaire)
                 const contact = creerContact(
                     document.getElementById("firstName").value,
                     document.getElementById("lastName").value,

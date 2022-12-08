@@ -53,7 +53,7 @@ const produitPanierToString = (produitPanier) => {
 }
 
 /* Retourne les produits du panier (passé en argument) (sous forme d'une chaîne) 
-    '' Si panier = null
+   Retourne '' Si panier = null
 */
 const panierToString = (panier) => {
     let s = '';
@@ -81,23 +81,13 @@ Lorsqu’on ajoute un produit au panier :
 const ajouterPanier = (produitPanier) => {
     const quantiteMaxiPanier = 100; // pour une référence donnée, quantité maximale autorisée pour mettre au panier
     // Récupérer le Panier à partir du localStorage 
-    // let panier = JSON.parse(localStorage.getItem("panierZ")); // JSON.parse() reforme l’objet à partir de la chaîne
-    // let panier = getLocalStorage("panierZ");
-    // debugger;
-
-    // let panier = getLocalStorage("panierZ");
-
-    let objLinea = localStorage.getItem("panierZ");
-    let objJson = JSON.parse(objLinea);
-    let panier = objJson;
-
+    let panier = getLocalStorage("panierZ");
     console.log('Ajout panier: get', panier);
 
     let ajout = true;
-    // debugger;
+
     if (panier === null) {
-        panier = [];
-        panier.push(produitPanier);
+        panier[0] = produitPanier;
     } else {
         const trouve = getProduitPanier(panier, produitPanier.id, produitPanier.couleur);
 
@@ -116,13 +106,10 @@ const ajouterPanier = (produitPanier) => {
     }
 
     if (ajout) {
-        // Mettre le Panier modifié dans le localStorage
-        // localStorage.setItem("panierZ", JSON.stringify(panier)); // JSON.stringify() transforme l'objet panier en chaine de caractères
-        // setLocalStorage(panier, "panierZ");
+        // Met dans le localStorage le Panier modifié
+        setLocalStorage("panierZ", panier);
         console.log('Après:', panier, "panierZ");
 
-        // setLocalStorage(panier, "panierZ"); 
-        localStorage.setItem("panierZ", JSON.stringify(panier));
         alert("Ce Produit a été ajouté au Panier. Vous allez être redirigé sur la page Panier.");
         window.location.href = 'cart.html';
     }
