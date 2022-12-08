@@ -25,13 +25,15 @@ const getNomInputsFormulaire = () => {
 */
 const inputFormulairePatternOK = (nomInput, val) => {
     switch (nomInput) {
-        case 'firstName': return /^[A-Z][a-z\é\è\ô\-]+$/.test(val); // "[a-zA-Z-éèô -]*"
+       // case 'firstName': return /^[A-Z][a-z\é\è\ô\-]+$/.test(val); // "[a-zA-Z-éèô -]*"
+        case 'firstName': return /^[A-Z\É][a-zA-Z\é\è\ô\ \-]+$/.test(val);
             break;
-        case 'lastName': return /^[A-Z][a-z\é\è\ô\-\' ]+$/.test(val);
+        case 'lastName': return /^[A-Z\É][a-zA-Z\é\è\ô\ \-\']+$/.test(val);
             break;
         case 'city': return /^[A-Z][a-z\é\è\ô\à\-\' ]+$/.test(val); // [a-zA-Z-éèà]*
             break;
-        case 'address': return /^([0-9a-z0-9'àâéèêôùûçÀÂÉÈÔÙÛÇ.°\s-]{8,100})$/.test(val);
+        case 'address': return /^([0-9a-z0-9'àâéèêôùûçÀÂÉÈÔÙÛÇ.°\s-]{8,100})$/.test(val) 
+            && !( /^[\s]*[\s]*$/.test(val) ); // ET ne pas autoriser une adresse composée d'espaces avant et après
             // return /^[A-Za-z0-9.,- ]{4,20}[ ]{0,2}$/.test(val);
             break;
         case 'email':
@@ -61,7 +63,7 @@ const inputFormulaireOK = (nomInput) => {
         input.style.backgroundColor = 'red';
         let message = "(Exemple valide : ";
         switch (nomInput) {
-            case 'firstName': message += "Pierre-jérôme)";
+            case 'firstName': message += "Élodie-Pacôme)";
                 break;
             case 'lastName': message += "Giscard d'estaing de-la-tour)";
                 break;
