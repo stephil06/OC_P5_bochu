@@ -2,11 +2,6 @@
 // ------- Fonctions du LocalStorage ---------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------------
 
-/*
-function realTypeof(obj) {
-    return Object.prototype.toString.apply(obj);
-}*/
-
 /* Retourne à partir du localStorage l'objet stocké de nom element */
 const getLocalStorage = (nomObjet) => {
      /* let o = JSON.parse(localStorage.getItem(nomObjet));

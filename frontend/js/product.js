@@ -50,9 +50,12 @@ const updateDomLeProduit = (produit) => {
 */
 const afficherLeProduit = async (produitId) => {
 
-    const produit = await get(`http://localhost:3000/api/products/${produitId}`); // alert(produit._id);
+    const produit = await get(`http://localhost:3000/api/products/${produitId}`);
 
-    if (produit === -1) { alert("Problème du serveur. Veuillez nous contacter à support@name.com"); exit; }
+    if (produit === -1) {
+        alert("Problème du serveur. Veuillez nous contacter à support@name.com");
+        exit;
+    }
     if (produit._id === undefined) {
         alert("Ce produit n'existe pas ! Vous allez être redirigé sur la page d'accueil.");
         window.location.href = 'index.html';
@@ -64,7 +67,7 @@ const afficherLeProduit = async (produitId) => {
 
 const initProduitDetail = () => {
 
-    const produitId = getValeurParametreURLpageCourante("id"); // alert(produitId);
+    const produitId = getValeurParametreURLpageCourante("id");
 
     afficherLeProduit(produitId);
 
@@ -72,7 +75,7 @@ const initProduitDetail = () => {
     document.querySelector("#addToCart").addEventListener('click', (evt) => {
         const couleur = lireCouleur();
         const quantite = lireQuantite();
-        const produitPanier = creerProduitPanier(produitId, couleur, quantite); // alert( produitPanierToString(null) );
+        const produitPanier = creerProduitPanier(produitId, couleur, quantite);
         ajouterPanier(produitPanier);
     });
 }

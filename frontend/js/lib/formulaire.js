@@ -15,7 +15,6 @@ const getNomInputsFormulaire = () => {
         // récupérer pour chaque <input> du formulaire, la valeur de l'attribut name
         input => {
             nomInputsFormulaire.push(input.attributes.item(1).nodeValue);
-            // alert(input.attributes.item(1).nodeValue);
         }
     );
     return nomInputsFormulaire;
@@ -104,6 +103,5 @@ const isInputFormulaireSaisie = () => {
             if (document.getElementById(nom).value != '') saisie = true;
         }
     );
-    // alert(saisie);
     return saisie;
 }

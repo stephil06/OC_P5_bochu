@@ -7,7 +7,10 @@ import {setLocalStorage} from './localStorage.js'; */
 */
 const lireCouleur = () => {
     const couleur = document.querySelector("#colors").value;
-    if (couleur === '') { alert("Merci de renseigner une couleur"); exit; }
+    if (couleur === '') {
+        alert("Merci de renseigner une couleur");
+        exit;
+    }
     return couleur;
 }
 
@@ -18,7 +21,10 @@ const lireCouleur = () => {
 const lireQuantite = () => {
     const quantiteMaxiPanier = 100; // pour une référence donnée, quantité maximale autorisée pour mettre au panier
     const quantite = parseInt(document.querySelector("#quantity").value);
-    if (quantite <= 0 || quantite > quantiteMaxiPanier) { alert(`Merci de renseigner un nombre de produit(s) (compris entre 1 & ${quantiteMaxiPanier})`); exit; }
+    if (quantite <= 0 || quantite > quantiteMaxiPanier) {
+        alert(`Merci de renseigner un nombre de produit(s) (compris entre 1 & ${quantiteMaxiPanier})`);
+        exit;
+    }
     return quantite;
 }
 
@@ -79,26 +85,20 @@ const ajouterPanier = (produitPanier) => {
     // let panier = getLocalStorage("panierZ");
     // debugger;
 
-    // let panier = getLocalStorage("panierZ"); alert(panier);
+    // let panier = getLocalStorage("panierZ");
 
     let objLinea = localStorage.getItem("panierZ");
     let objJson = JSON.parse(objLinea);
     let panier = objJson;
-    alert("Panier:" + panier);
 
     console.log('Ajout panier: get', panier);
-    /*
-    let s = 'Panier avant: \n';
-   // panier.forEach( value =>  s += `(${value.id};${value.couleur};${value.quantite})` ); alert(s); 
-   
-    s += panierToString(panier); */
+
     let ajout = true;
     // debugger;
     if (panier === null) {
         panier = [];
         panier.push(produitPanier);
     } else {
-        // const trouve = panier.find(element => element.id === produitPanier.id && element.couleur === produitPanier.couleur);
         const trouve = getProduitPanier(panier, produitPanier.id, produitPanier.couleur);
 
         if (trouve === undefined)
@@ -115,11 +115,6 @@ const ajouterPanier = (produitPanier) => {
         }
     }
 
-    /* s += '\nPanier après: \n';
-    // panier.forEach( value =>  s += "(" + value.id + ";" + value.couleur + ";" + value.quantite + ")"  ); alert(s); 
-    s += panierToString(panier);
-    alert(s); */
-
     if (ajout) {
         // Mettre le Panier modifié dans le localStorage
         // localStorage.setItem("panierZ", JSON.stringify(panier)); // JSON.stringify() transforme l'objet panier en chaine de caractères
@@ -128,13 +123,7 @@ const ajouterPanier = (produitPanier) => {
 
         // setLocalStorage(panier, "panierZ"); 
         localStorage.setItem("panierZ", JSON.stringify(panier));
-        localStorage.setItem("panierY", JSON.stringify(panier));
-
-        alert("Nb éléments du panier:" + panier.length);
         alert("Ce Produit a été ajouté au Panier. Vous allez être redirigé sur la page Panier.");
-        alert(`Nombre de clés du panier : ${localStorage.length}`);
-        let panierZ = localStorage.getItem("panierZ"); alert("panierZ:" + panierZ);
-
         window.location.href = 'cart.html';
     }
 }

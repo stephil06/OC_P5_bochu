@@ -37,21 +37,19 @@ const updateDomListeProduits = (listeProduits) => {
     NB : les produits ne sont pas mis dans le localStorage : ON NE DOIT PAS STOCKER LE PRIX !!! (cf. cachier des charges)
 */
 const afficherTousLesProduits = async () => {
-    // URL de l'API de tous les produits
-    const listeProduits = await get('http://localhost:3000/api/products');
+    const listeProduits = await get('http://localhost:3000/api/products'); // URL de l'API de tous les produits
 
-    if (listeProduits === -1) { alert('Problème du serveur. Veuillez nous contacter à support@name.com'); }
+    if (listeProduits === -1) {
+        alert('Problème du serveur. Veuillez nous contacter à support@name.com');
+    }
     else {
         updateDomListeProduits(listeProduits);
-        // ne pas mettre la liste des Produits dans le localStorage : ON NE DOIT PAS STOCKER LE PRIX !!! (cf. cachier des charges)
+        // ne pas mettre la liste des Produits dans le localStorage : INTERDIT DE STOCKER LE PRIX !!! (cf. cachier des charges)
     }
 }
 
 // -------------------------------------------------------------------------------------------------------
 // CORPS -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------------
-
-alert (localStorage.length);
-var key; for (var i = 0; i < localStorage.length; i++) { key = localStorage.key(i); alert(key); }
 
 afficherTousLesProduits();

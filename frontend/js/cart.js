@@ -5,9 +5,12 @@
  (via get() de requestAPI.js) 
 */
 const getProduitAPI = async (produitId) => {
-    const produit = await get(`http://localhost:3000/api/products/${produitId}`); // alert(produit._id);
+    const produit = await get(`http://localhost:3000/api/products/${produitId}`);
 
-    if (produit === -1) { alert("Problème du serveur. Veuillez nous contacter à support@name.com"); exit; }
+    if (produit === -1) {
+        alert("Problème du serveur. Veuillez nous contacter à support@name.com");
+        exit;
+    }
     else {
         return produit;
     }
@@ -33,7 +36,6 @@ const getPanierQuantite = (panier) => {
 
     let qteTotal = (panier.length >= 1) ? panier.map(produitPanier => produitPanier.quantite).reduce((total, quantite) => total += quantite)
         : 0;
-    // alert(`Quantité totale: ${qteTotal}`);
     return qteTotal;
 }
 
@@ -49,7 +51,6 @@ const getPanierPrix = async (panier) => {
         const produit = await getProduitAPI(panier[i].id);
         prixTotal += parseFloat(produit.price * panier[i].quantite);
     }
-    // alert(`Prix total: ${prixTotal}`);
     return prixTotal;
 }
 
@@ -84,7 +85,6 @@ const getPanierCardHTML = (panier, produit, idProduit, pCouleur, prix) => {
                 </div>
             </div>
         </article>`;
-    // alert(leCard);
     return leCard;
 }
 
@@ -94,13 +94,12 @@ const getPanierCardHTML = (panier, produit, idProduit, pCouleur, prix) => {
    Retourne le Panier modifié
 */
 const setPanierQuantite = (panier, idProduit, pCouleur, quantiteModifiee) => {
-    // let trouve = panier.find(element => element.id === idProduit && element.couleur === pCouleur);
-    let trouve = getProduitPanier(panier, idProduit, pCouleur);
+    let produitPanier = getProduitPanier(panier, idProduit, pCouleur);
 
-    qteAvant = trouve.quantite;
-    // Modifie la quantite dans le Panier, puis stocke le Panier modifié dans le LocalStorage
-    trouve.quantite = quantiteModifiee;
-
+    // Modifie la quantite dans le Panier
+    produitPanier.quantite = quantiteModifiee;
+    
+    // Stocke le Panier modifié dans le LocalStorage
     localStorage.setItem("panierZ", JSON.stringify(panier));
     // setLocalStorage(panier, "panierZ");
 
@@ -112,13 +111,12 @@ const setPanierQuantite = (panier, idProduit, pCouleur, quantiteModifiee) => {
  Retourne le panier modifié
 */
 const removePanierProduit = (panier, idProduit, pCouleur) => {
-    // const trouve = panier.find(element => element.id === idProduit && element.couleur === pCouleur);
-    const trouve = getProduitPanier(panier, idProduit, pCouleur);
+    const produitPanier = getProduitPanier(panier, idProduit, pCouleur);
 
     /* template pour supprimer un élément d'un tableau : 
     let nbr = 6; var tab = [3, 6, 8]; tab = tab.filter(item => item !== nbr) 
     */
-    let panier2 = panier.filter(item => item != trouve);
+    let panier2 = panier.filter(item => item != produitPanier);
 
     localStorage.setItem("panierZ", JSON.stringify(panier2));
     // setLocalStorage(panier2, "panierZ");
@@ -162,8 +160,7 @@ const afficherPanierTotaux = async (panier) => {
    - Pour chaque référence du panier (même idProduit & même couleur), on a la possibilité de : 
         - Modifier sa quantité (à chaque changement de valeur de l'<input> correspondant ".itemQuantity")
         - la supprimer (si clic sur l'élément correspondant "supprimer" ".deleteItem")
-
- cf. https://fr.javascript.info/modifying-document
+             cf. https://fr.javascript.info/modifying-document
 */
 const afficherPanier = async (panier) => {
     // debugger;
@@ -171,7 +168,8 @@ const afficherPanier = async (panier) => {
 
     let s = '';
     for (i = 0; i < panier.length; i++) {
-        const product = await getProduitAPI(panier[i].id); const prix2 = product.price; // alert("prix: " + parseFloat(product.price) );
+        const product = await getProduitAPI(panier[i].id); 
+        const prix2 = product.price;
         s += getPanierCardHTML(panier, product, panier[i].id, panier[i].couleur, prix2);
     }
     listeProduitsDOM.insertAdjacentHTML("beforeend", s);
@@ -180,12 +178,12 @@ const afficherPanier = async (panier) => {
     panier.forEach(
         async (produitPanier) => {
             const product = await getProduitAPI(produitPanier.id); const prix2 = product.price;
-            s += getPanierCardHTML(panier, product, produitPanier.id, produitPanier.couleur, prix2); // alert(s);
+            s += getPanierCardHTML(panier, product, produitPanier.id, produitPanier.couleur, prix2);
             listeProduitsDOM.insertAdjacentHTML("beforeend", s);
         });
     */
 
-    afficherPanierTotaux(panier); // alert(`prix panier: {gettPanierPrix(panier)}`);
+    afficherPanierTotaux(panier);
 
     // Au changement de valeur de chaque <input> de classe '.itemQuantity' : MODIFIER DANS LE PANIER LA QUANTITE de chaque produit
     // modifierPanierQuantite(panier, event);
@@ -194,20 +192,20 @@ const afficherPanier = async (panier) => {
         quantityInput.addEventListener("change", (event) => {
 
             // récupérer la quantité modifiée
-            const quantiteModifiee = parseInt(event.target.value); // alert(quantiteModifiee);
+            const quantiteModifiee = parseInt(event.target.value);
             const quantiteMaxiPanier = 100;
             if (quantiteModifiee <= 0 || quantiteModifiee > quantiteMaxiPanier) {
-                alert(`Merci de renseigner un nombre de produit(s) (compris entre 1 & ${quantiteMaxiPanier})`); exit;
+                alert(`Merci de renseigner un nombre de produit(s) (compris entre 1 & ${quantiteMaxiPanier})`);
+                exit;
             }
 
             // identifier le idProduit & la couleur du Produit Panier dont on souhaite modifier la quantité
-            const idProduit = event.target.closest(".cart__item").dataset.id; // alert(idProduit);
-            const couleur = event.target.closest(".cart__item").dataset.color; // alert(couleur);
+            const idProduit = event.target.closest(".cart__item").dataset.id;
+            const couleur = event.target.closest(".cart__item").dataset.color;
 
             // modifier dans le Panier pour le produit & couleur en question la quantité modifiée
             let panier3 = setPanierQuantite(panier, idProduit, couleur, quantiteModifiee); // panier = panier3;
 
-            // alert(`Quantité du panier: ${getPanierQuantite(panier)}`);
             afficherPanierTotaux(panier);
         })
     });
@@ -219,11 +217,10 @@ const afficherPanier = async (panier) => {
     deleteProduits.forEach((input) => {
         // au clic sur chaque <p> '.deleteItem'
         input.addEventListener('click', (event) => {
-            // alert("Suppression");
 
             // identifier le idProduit & la couleur du Produit que l'on veut supprimer du Panier 
-            const idProduit = event.target.closest(".cart__item").dataset.id; // alert(idProduit);
-            const couleur = event.target.closest(".cart__item").dataset.color; // alert(couleur);
+            const idProduit = event.target.closest(".cart__item").dataset.id;
+            const couleur = event.target.closest(".cart__item").dataset.color;
 
             let suppression = confirm("Souhaitez-vous supprimer ce produit ?");
             if (suppression) {
@@ -236,7 +233,6 @@ const afficherPanier = async (panier) => {
                         let panier2 = removePanierProduit(panier, idProduit, couleur);
                         panier = panier2;
                         event.target.closest(".cart__item").remove();
-                        // alert(`Quantité du panier: ${getPanierQuantite(panier)}`);
                         getPanierQuantite(panier) != 0 ? afficherPanierTotaux(panier) : window.location.href = 'cart.html';
                     }
                 }
@@ -244,7 +240,6 @@ const afficherPanier = async (panier) => {
                     let panier2 = removePanierProduit(panier, idProduit, couleur);
                     panier = panier2;
                     event.target.closest(".cart__item").remove();
-                    // alert(`Quantité du panier: ${getPanierQuantite(panier)}`);
                     getPanierQuantite(panier) != 0 ? afficherPanierTotaux(panier) : window.location.href = 'cart.html';
                 }
             }
@@ -316,17 +311,11 @@ const initPanier = () => {
     // ---------------------------------------------------------------------------------------------------
     // récupérer (du localStorage) le panier 
 
-    alert("Page panier");
     //let panier = getLocalStorage("panierZ"); 
 
     let panier = JSON.parse(localStorage.getItem('panierZ'));
 
-    alert("panier dans cart.js:" + panier);
-    alert("Nombre de clés du panier :" + localStorage.length);
-    // alert("Nb éléments du panier:" + panier.length);
-
     if (!panierVide(panier)) { // Si panierVide(), redirection vers la homepage
-
         afficherPanier(panier);
     }
     // ------------------------------------------------------------------------------------------------
@@ -339,7 +328,6 @@ const initPanier = () => {
     // Pour chaque <input> du formulaire
     nomInputsFormulaire.forEach(
         input => {
-            // alert(input);
             // au changement de valeur de chaque <input> : tester sa validité 
             document.querySelector('#' + input).addEventListener('change', (evt) => {
                 inputFormulaireOK(input);
@@ -361,14 +349,9 @@ const initPanier = () => {
                     document.getElementById("city").value,
                     document.getElementById("email").value
                 );
-                // alert("contact:" + contactToString(contact));
 
                 // créer un tableau contenant les id des produits du panier
                 const tableauIdProduitsPanier = panier.map(produitPanier => produitPanier.id);
-
-                let s = '';
-                tableauIdProduitsPanier.forEach(id => { s += id + ","; });
-                // alert("tableauIdProduitsPanier:" + s);
 
                 // créer un objet "commande"
                 const commande = creerCommande(contact, tableauIdProduitsPanier);
