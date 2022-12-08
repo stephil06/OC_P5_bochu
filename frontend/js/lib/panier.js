@@ -21,6 +21,11 @@ const lireCouleur = () => {
 const lireQuantite = () => {
     const quantiteMaxiPanier = 100; // pour une référence donnée, quantité maximale autorisée pour mettre au panier
     const quantite = parseInt(document.querySelector("#quantity").value);
+    if (isNaN(quantite)) {
+        alert("Merci de renseigner un nombre pour la quantité");
+        document.querySelector("#quantity").value = document.querySelector("#quantity").defaultValue;
+        exit;
+    }
     if (quantite <= 0 || quantite > quantiteMaxiPanier) {
         alert(`Merci de renseigner un nombre de produit(s) (compris entre 1 & ${quantiteMaxiPanier})`);
         exit;

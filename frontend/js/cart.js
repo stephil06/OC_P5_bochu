@@ -193,8 +193,23 @@ const afficherPanier = async (panier) => {
             // récupérer la quantité modifiée
             const quantiteModifiee = parseInt(event.target.value);
             const quantiteMaxiPanier = 100;
+
+            // Si la quantité est valide : on mémorise la valeur par défaut à quantiteModifiee
+            // => quand on modifie la qte, si la valeur n'est pas correcte, remettre l'ancienne valeur après l'alert
+            if( !isNaN(quantiteModifiee) && quantiteModifiee > 0 & quantiteModifiee <= quantiteMaxiPanier  )
+                event.target.defaultValue = quantiteModifiee;
+            
+            if (isNaN(quantiteModifiee)) {
+                alert("Merci de renseigner un nombre pour la quantité");
+               // mettre dans le <input> correspondant la valeur par défaut
+                event.target.value = event.target.defaultValue;
+                exit;
+            }
+
             if (quantiteModifiee <= 0 || quantiteModifiee > quantiteMaxiPanier) {
                 alert(`Merci de renseigner un nombre de produit(s) (compris entre 1 & ${quantiteMaxiPanier})`);
+                // mettre dans le <input> correspondant la valeur par défaut
+                event.target.value = event.target.defaultValue;
                 exit;
             }
 
