@@ -191,18 +191,28 @@ const afficherPanier = async (panier) => {
         quantityInput.addEventListener("change", (event) => {
 
             // récupérer la quantité modifiée
+            const data = event.target.value;
             const quantiteModifiee = parseInt(event.target.value);
             const quantiteMaxiPanier = 100;
 
             // Si la quantité est valide : on mémorise la valeur par défaut à quantiteModifiee
             // => quand on modifie la qte, si la valeur n'est pas correcte, remettre l'ancienne valeur après l'alert
-            if( !isNaN(quantiteModifiee) && quantiteModifiee > 0 & quantiteModifiee <= quantiteMaxiPanier  )
+            if (!isNaN(quantiteModifiee) && quantiteModifiee > 0 & quantiteModifiee <= quantiteMaxiPanier)
                 event.target.defaultValue = quantiteModifiee;
-            
+
             if (isNaN(quantiteModifiee)) {
                 alert("Merci de renseigner un nombre pour la quantité");
-               // mettre dans le <input> correspondant la valeur par défaut
+                // mettre dans le <input> correspondant la valeur par défaut
                 event.target.value = event.target.defaultValue;
+                exit;
+            }
+
+            if (data % 1 != 0) {
+                // ce n'est pas un nombre entier (eg. 2,01)
+
+                // mettre dans le <input> correspondant la valeur par défaut
+                event.target.value = event.target.defaultValue;
+                alert("Merci de renseigner un nombre entier pour la quantité");
                 exit;
             }
 
@@ -375,10 +385,10 @@ const initPanier = () => {
                     alert("Problème du serveur. Veuillez nous contacter à support@name.com\nDésolé, votre commande n'est pas validée.");
                 }
                 else {
-                    // redirection vers la page "confirmation.html?id= avec id = orderId"
-                    window.location.href = `confirmation.html?id=${orderId}`;
                     // Retirer le panier du localStorage
                     localStorage.removeItem("panierZ");
+                    // redirection vers la page "confirmation.html?id= avec id = orderId"
+                    window.location.href = `confirmation.html?id=${orderId}`;
                 }
             }
         });

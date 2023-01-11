@@ -20,14 +20,27 @@ const lireCouleur = () => {
 */
 const lireQuantite = () => {
     const quantiteMaxiPanier = 100; // pour une référence donnée, quantité maximale autorisée pour mettre au panier
-    const quantite = parseInt(document.querySelector("#quantity").value);
+    const data = document.querySelector("#quantity").value;
+    const quantite = parseInt(document.querySelector("#quantity").value, 10);
+
     if (isNaN(quantite)) {
+        // ce n'est pas un nombre (eg. , ou . ou - )  
         alert("Merci de renseigner un nombre pour la quantité");
         document.querySelector("#quantity").value = document.querySelector("#quantity").defaultValue;
         exit;
     }
+
+    if (data % 1 != 0) {
+        // ce n'est pas un nombre entier (eg. 2,01)
+        alert("Merci de renseigner un nombre entier pour la quantité");
+        document.querySelector("#quantity").value = document.querySelector("#quantity").defaultValue;
+        exit;
+    }
+
     if (quantite <= 0 || quantite > quantiteMaxiPanier) {
+        // eg. -1 ou 101 
         alert(`Merci de renseigner un nombre de produit(s) (compris entre 1 & ${quantiteMaxiPanier})`);
+        document.querySelector("#quantity").value = document.querySelector("#quantity").defaultValue;s
         exit;
     }
     return quantite;
@@ -84,6 +97,7 @@ Lorsqu’on ajoute un produit au panier :
                 Sinon : on affiche un message "Pour cette référence, vous pouvez encore ajouter quantité ajoutable"
 */
 const ajouterPanier = (produitPanier) => {
+    debugger;
     const quantiteMaxiPanier = 100; // pour une référence donnée, quantité maximale autorisée pour mettre au panier
     // Récupérer le Panier à partir du localStorage 
     let panier = getLocalStorage("panierZ");
@@ -92,7 +106,8 @@ const ajouterPanier = (produitPanier) => {
     let ajout = true;
 
     if (panier === null) {
-        panier[0] = produitPanier;
+        panier = [];
+        panier.push(produitPanier);
     } else {
         const trouve = getProduitPanier(panier, produitPanier.id, produitPanier.couleur);
 

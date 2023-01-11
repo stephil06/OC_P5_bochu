@@ -3,8 +3,10 @@
 */
 const get = async (url) => {
     try {
-        const reponse = await fetch(url);
-        return await reponse.json();
+        // interrogation de l’API ayant pour URL url passé en argument et retourne les data dans la constante reponse.
+        const reponse = await fetch(url); 
+        // retourne la réponse sous forme d’un objet JSON
+        return await reponse.json(); 
     }
     catch (exception) {
         return -1;
