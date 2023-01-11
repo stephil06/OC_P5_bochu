@@ -165,6 +165,22 @@ const afficherPanier = async (panier) => {
     // debugger;
     let listeProduitsDOM = document.querySelector("#cart__items");
 
+    // trier le panier selon l'id
+    // => RG : Dans le panier, les produits doivent toujours apparaître de manière regroupée par modèle et par couleur.
+    
+    /* Template pour trier le tableau selon le name
+    const browsers = [
+        { name: 'Chrome', year: 2008 },
+        { name: 'Firefox', year: 2004 },
+        { name: 'Safari', year: 2003 },
+        { name: 'Opera', year: 1996 },
+        { name: 'IE', year: 1995 },
+        { name: 'Edge', year: 2015 }
+    ];
+    browsers.sort((x, y) => x.name.localeCompare(y.name));
+    */
+    panier.sort((x, y) => x.id.localeCompare(y.id));
+
     let s = '';
     for (i = 0; i < panier.length; i++) {
         const product = await getProduitAPI(panier[i].id);
